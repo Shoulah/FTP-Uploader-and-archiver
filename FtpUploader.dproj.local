@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2019/10/19 18:22:25.000.233,=C:\Users\Dark Angel\Documents\Embarcadero\Studio\Projects\FormUnit1.pas</Transaction>
+    <Transaction>2019/10/19 18:22:26.000.684,=C:\Users\Dark Angel\Documents\Embarcadero\Studio\Projects\WebModuleUnit1.pas</Transaction>
+    <Transaction>2019/12/04 21:20:43.000.172,=C:\Users\Dark Angel\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2019/12/04 21:21:53.000.045,C:\Users\Dark Angel\Documents\Embarcadero\Studio\Projects\FTP Uploader and Archiver\uMain.dfm=C:\Users\Dark Angel\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2019/12/04 21:21:53.000.044,C:\Users\Dark Angel\Documents\Embarcadero\Studio\Projects\FTP Uploader and Archiver\uMain.pas=C:\Users\Dark Angel\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2019/12/04 21:22:08.000.473,C:\Users\Dark Angel\Documents\Embarcadero\Studio\Projects\FTP Uploader and Archiver\FtpUploader.dproj=C:\Users\Dark Angel\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+  </Transactions>
+</BorlandProject>
