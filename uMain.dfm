@@ -145,9 +145,9 @@ object frMain: TfrMain
       end
     end
     object Button2: TButton
-      Left = 318
+      Left = 336
       Top = 366
-      Width = 75
+      Width = 57
       Height = 25
       Caption = 'Save'
       TabOrder = 3
