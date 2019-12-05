@@ -97,145 +97,144 @@ begin
   StartProgramWithWindowsStartup(CheckBox1.Checked);
 end;
 
-function TfrMain.CheckFilesExists(const Directory,
-  FilesExtension: string): TStringList;
+function TfrMain.CheckFilesExists(const Directory, FilesExtension: string)
+  : TStringList;
 var
- mySearchRec : TSearchRec;
+  mySearchRec: TSearchRec;
 begin
   Result := TStringList.Create;
 
   FindFirst(Directory + '*.' + FilesExtension, faAnyFile, mySearchRec);
- repeat
-  if mySearchRec.Name <> '' then
+  repeat
+    if mySearchRec.Name <> '' then
     begin
-     Result.Add(Directory + mySearchRec.Name);
+      Result.Add(Directory + mySearchRec.Name);
     end;
 
- until (FindNext(mySearchRec) <> 0);
+  until (FindNext(mySearchRec) <> 0);
 
- FindClose(mySearchRec);
+  FindClose(mySearchRec);
 end;
 
 procedure TfrMain.ConnectToFTPServer;
 begin
- IdFTP1.Host := Edit1.Text;
- IdFTP1.Username := Edit2.Text;
- IdFTP1.Password := Edit3.Text;
- try
-   IdFTP1.Connect;
- except
-  on E: Exception do
-   ShowMessage(E.Message);
+  IdFTP1.Host := Edit1.Text;
+  IdFTP1.Username := Edit2.Text;
+  IdFTP1.Password := Edit3.Text;
+  try
+    IdFTP1.Connect;
+  except
+    on E: Exception do
+      ShowMessage(E.Message);
 
- end;
+  end;
 end;
 
 procedure TfrMain.CreateOrOpenDirectoryOnFTPServer;
 var
- I: Integer;
- myYear: string;
- myMonth :string;
- myDate :string;
- IsDirectoryExists: Boolean;
+  I: Integer;
+  myYear: string;
+  myMonth: string;
+  myDate: string;
+  IsDirectoryExists: Boolean;
 begin
- if IdFTP1.Connected then
- begin
-   myYear := IntToStr(YearOf(Date));
+  if IdFTP1.Connected then
+  begin
+    myYear := IntToStr(YearOf(Date));
 
-   myMonth := FormatSettings.LongMonthNames[MonthOf(Date)];
+    myMonth := FormatSettings.LongMonthNames[MonthOf(Date)];
 
-   myDate := FormatDateTime('YYYYMMDD', Date);
+    myDate := FormatDateTime('YYYYMMDD', Date);
 
-   IdFTP1.List;
-   for I := 0 to IdFTP1.DirectoryListing.Count -1 do
-     begin
-       if IdFTP1.DirectoryListing.Items[I].FileName =  myYear then
-         begin
-          IsDirectoryExists := True;
-          Break;
-         end;
-     end;
-
-   if not IsDirectoryExists then
+    IdFTP1.List;
+    for I := 0 to IdFTP1.DirectoryListing.Count - 1 do
+    begin
+      if IdFTP1.DirectoryListing.Items[I].FileName = myYear then
       begin
-        IdFTP1.MakeDir(myYear);
+        IsDirectoryExists := True;
+        Break;
       end;
+    end;
+
+    if not IsDirectoryExists then
+    begin
+      IdFTP1.MakeDir(myYear);
+    end;
 
     IsDirectoryExists := False;
     IdFTP1.ChangeDir(myYear);
     IdFTP1.List;
 
-    for I := 0 to IdFTP1.DirectoryListing.Count -1 do
-     begin
-       if IdFTP1.DirectoryListing.Items[I].FileName =  myMonth then
-         begin
-          IsDirectoryExists := True;
-          Break;
-         end;
-     end;
-
-   if not IsDirectoryExists then
+    for I := 0 to IdFTP1.DirectoryListing.Count - 1 do
+    begin
+      if IdFTP1.DirectoryListing.Items[I].FileName = myMonth then
       begin
-        IdFTP1.MakeDir(myMonth);
+        IsDirectoryExists := True;
+        Break;
       end;
+    end;
+
+    if not IsDirectoryExists then
+    begin
+      IdFTP1.MakeDir(myMonth);
+    end;
 
     IsDirectoryExists := False;
     IdFTP1.ChangeDir(myMonth);
     IdFTP1.List;
 
-   for I := 0 to IdFTP1.DirectoryListing.Count -1 do
-     begin
-       if IdFTP1.DirectoryListing.Items[I].FileName =  myDate then
-         begin
-          IsDirectoryExists := True;
-          Break;
-         end;
-     end;
-
-   if not IsDirectoryExists then
+    for I := 0 to IdFTP1.DirectoryListing.Count - 1 do
+    begin
+      if IdFTP1.DirectoryListing.Items[I].FileName = myDate then
       begin
-        IdFTP1.MakeDir(myDate);
+        IsDirectoryExists := True;
+        Break;
       end;
+    end;
 
+    if not IsDirectoryExists then
+    begin
+      IdFTP1.MakeDir(myDate);
+    end;
 
     IdFTP1.ChangeDir(myDate);
 
- end;
+  end;
 end;
 
 procedure TfrMain.DeleteLocalFiles(const FilesList: TStringList);
 var
- I : Integer;
- Attributes : Word;
+  I: Integer;
+  Attributes: Word;
 begin
- for I := 0 to FilesList.Count -1 do
-   begin
-     Attributes := FileGetAttr(FilesList.Strings[I], True);
-     Attributes := Attributes - faReadOnly;
-     FileSetAttr(FilesList.Strings[I], Attributes, True);
-     DeleteFile(FilesList.Strings[I]);
-   end;
+  for I := 0 to FilesList.Count - 1 do
+  begin
+    Attributes := FileGetAttr(FilesList.Strings[I], True);
+    Attributes := Attributes - faReadOnly;
+    FileSetAttr(FilesList.Strings[I], Attributes, True);
+    DeleteFile(FilesList.Strings[I]);
+  end;
 end;
 
 procedure TfrMain.DoWork;
 var
- myFilesList : TStringList;
+  myFilesList: TStringList;
 begin
- myFilesList := TStringList.Create;
- myFilesList := CheckFilesExists(Edit4.Text, Edit5.Text);
+  myFilesList := TStringList.Create;
+  myFilesList := CheckFilesExists(Edit4.Text, Edit5.Text);
 
- if myFilesList.Count > 0 then
- begin
+  if myFilesList.Count > 0 then
+  begin
 
-   ConnectToFTPServer;
-   CreateOrOpenDirectoryOnFTPServer;
-   UploadFiles(myFilesList);
-   IdFTP1.Disconnect;
-   DeleteLocalFiles(myFilesList);
+    ConnectToFTPServer;
+    CreateOrOpenDirectoryOnFTPServer;
+    UploadFiles(myFilesList);
+    IdFTP1.Disconnect;
+    DeleteLocalFiles(myFilesList);
 
- end;
+  end;
 
- myFilesList.Free;
+  myFilesList.Free;
 
 end;
 
@@ -336,25 +335,26 @@ end;
 
 procedure TfrMain.Timer1Timer(Sender: TObject);
 begin
- Timer1.Enabled := False;
+  Timer1.Enabled := False;
 
   DoWork;
 
- Timer1.Enabled := True;
+  Timer1.Enabled := True;
 
 end;
 
 procedure TfrMain.UploadFiles(const FilesList: TStringList);
 var
- I : Integer;
+  I: Integer;
 begin
-if IdFTP1.Connected then
- begin
- for I := 0 to FilesList.Count -1 do
- begin
-   IdFTP1.Put(FilesList.Strings[I], ExtractFileName(FilesList.Strings[I]), False, 0);
- end;
- end;
+  if IdFTP1.Connected then
+  begin
+    for I := 0 to FilesList.Count - 1 do
+    begin
+      IdFTP1.Put(FilesList.Strings[I], ExtractFileName(FilesList.Strings[I]),
+        False, 0);
+    end;
+  end;
 
 end;
 
