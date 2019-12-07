@@ -55,7 +55,7 @@ type
 
     procedure UploadFiles(const FilesList: TStringList);
 
-    procedure DeleteLocalFiles(const FilesList: TStringList);
+    procedure DeleteLocalFile(const FileName: string);
 
     procedure DoWork;
   public
@@ -202,19 +202,24 @@ begin
   end;
 end;
 
-procedure TfrMain.DeleteLocalFiles(const FilesList: TStringList);
+procedure TfrMain.DeleteLocalFile(const FileName: string);
 var
-  I: Integer;
-  Attributes: Word;
+ Attributes : Word;
 begin
-  for I := 0 to FilesList.Count - 1 do
+ if FileExists(FileName) then
   begin
-    Attributes := FileGetAttr(FilesList.Strings[I], True);
+  //- Get file attributes
+    Attributes := FileGetAttr(FileName, True);
+    //Remove read only
     Attributes := Attributes - faReadOnly;
-    FileSetAttr(FilesList.Strings[I], Attributes, True);
-    DeleteFile(FilesList.Strings[I]);
+    //Set new attributes -
+    FileSetAttr(FileName, Attributes, True);
+    //Delete file
+    DeleteFile(FileName);
   end;
 end;
+
+
 
 procedure TfrMain.DoWork;
 var
@@ -230,7 +235,6 @@ begin
     CreateOrOpenDirectoryOnFTPServer;
     UploadFiles(myFilesList);
     IdFTP1.Disconnect;
-    DeleteLocalFiles(myFilesList);
 
   end;
 
@@ -351,8 +355,15 @@ begin
   begin
     for I := 0 to FilesList.Count - 1 do
     begin
+     try
       IdFTP1.Put(FilesList.Strings[I], ExtractFileName(FilesList.Strings[I]),
         False, 0);
+      DeleteLocalFile(FilesList.Strings[I]);
+     except
+      on E : Exception do
+       ShowMessage('Upload fail with error: ' + E.Message);
+
+     end;
     end;
   end;
 
