@@ -3,7 +3,7 @@ object frMain: TfrMain
   Top = 0
   BorderStyle = bsDialog
   Caption = 'FTP Uploader and Archiver'
-  ClientHeight = 441
+  ClientHeight = 556
   ClientWidth = 426
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,10 +18,11 @@ object frMain: TfrMain
   TextHeight = 16
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 422
+    Top = 537
     Width = 426
     Height = 19
     Panels = <>
+    ExplicitTop = 422
   end
   object GroupBox1: TGroupBox
     Left = 8
@@ -152,6 +153,21 @@ object frMain: TfrMain
       Caption = 'Save'
       TabOrder = 3
       OnClick = Button2Click
+    end
+  end
+  object GroupBox5: TGroupBox
+    Left = 8
+    Top = 423
+    Width = 410
+    Height = 105
+    TabOrder = 2
+    object Memo1: TMemo
+      Left = 3
+      Top = 3
+      Width = 404
+      Height = 99
+      ScrollBars = ssVertical
+      TabOrder = 0
     end
   end
   object IdFTP1: TIdFTP

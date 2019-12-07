@@ -33,6 +33,8 @@ type
     IdFTP1: TIdFTP;
     Timer1: TTimer;
     IdAntiFreeze1: TIdAntiFreeze;
+    GroupBox5: TGroupBox;
+    Memo1: TMemo;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -118,6 +120,7 @@ end;
 
 procedure TfrMain.ConnectToFTPServer;
 begin
+  Memo1.Lines.Add('Try to connect to FTP Server..');
   IdFTP1.Host := Edit1.Text;
   IdFTP1.Username := Edit2.Text;
   IdFTP1.Password := Edit3.Text;
@@ -125,7 +128,10 @@ begin
     IdFTP1.Connect;
   except
     on E: Exception do
-      ShowMessage(E.Message);
+    begin
+      Memo1.Lines.Add('Connecting error with message: ' + E.Message);
+
+    end;
 
   end;
 end;
@@ -138,8 +144,12 @@ var
   myDate: string;
   IsDirectoryExists: Boolean;
 begin
+  IsDirectoryExists := False;
+
   if IdFTP1.Connected then
   begin
+    Memo1.Lines.Add('Connected to ' + IdFTP1.Host);
+    Memo1.Lines.Add('Start check if the remote folders exists');
     myYear := IntToStr(YearOf(Date));
 
     myMonth := FormatSettings.LongMonthNames[MonthOf(Date)];
@@ -204,22 +214,20 @@ end;
 
 procedure TfrMain.DeleteLocalFile(const FileName: string);
 var
- Attributes : Word;
+  Attributes: Word;
 begin
- if FileExists(FileName) then
+  if FileExists(FileName) then
   begin
-  //- Get file attributes
+    // - Get file attributes
     Attributes := FileGetAttr(FileName, True);
-    //Remove read only
+    // Remove read only
     Attributes := Attributes - faReadOnly;
-    //Set new attributes -
+    // Set new attributes -
     FileSetAttr(FileName, Attributes, True);
-    //Delete file
+    // Delete file
     DeleteFile(FileName);
   end;
 end;
-
-
 
 procedure TfrMain.DoWork;
 var
@@ -230,11 +238,12 @@ begin
 
   if myFilesList.Count > 0 then
   begin
-
+    Memo1.Lines.Add(IntToStr(myFilesList.Count) + ' New Files found');
     ConnectToFTPServer;
     CreateOrOpenDirectoryOnFTPServer;
     UploadFiles(myFilesList);
     IdFTP1.Disconnect;
+    Memo1.Lines.Add('Disconnected.');
 
   end;
 
@@ -322,12 +331,14 @@ begin
       if Start then
       begin
         myReg.WriteString('FTP Uploader', '"' + Application.ExeName + '"');
+        Memo1.Lines.Add('Application will start automatically with windows');
       end
       else
       begin
         if myReg.ValueExists('FTP Uploader') then
         begin
           myReg.DeleteValue('FTP Uploader');
+          Memo1.Lines.Add('Application auto startup is removed.');
         end;
       end;
     end;
@@ -355,15 +366,22 @@ begin
   begin
     for I := 0 to FilesList.Count - 1 do
     begin
-     try
-      IdFTP1.Put(FilesList.Strings[I], ExtractFileName(FilesList.Strings[I]),
-        False, 0);
-      DeleteLocalFile(FilesList.Strings[I]);
-     except
-      on E : Exception do
-       ShowMessage('Upload fail with error: ' + E.Message);
+      try
+        Memo1.Lines.Add('Try uploading ' +
+          ExtractFileName(FilesList.Strings[I]));
+        IdFTP1.Put(FilesList.Strings[I], ExtractFileName(FilesList.Strings[I]),
+          False, 0);
+        Memo1.Lines.Add(ExtractFileName(FilesList.Strings[I]) +
+          ' is Uploaded successfully');
+        Memo1.Lines.Add('Delete ' + ExtractFileName(FilesList.Strings[I]));
+        DeleteLocalFile(FilesList.Strings[I]);
+        Memo1.Lines.Add(ExtractFileName(FilesList.Strings[I]) +
+          ' is deleted successfully');
+      except
+        on E: Exception do
+          ShowMessage('Upload fail with error: ' + E.Message);
 
-     end;
+      end;
     end;
   end;
 
@@ -375,7 +393,8 @@ var
 begin
   myReg := TRegistry.Create;
   try
-    // By default, RootKey is set to HKEY_CURRENT_USER when the registry object is created
+    // By default, RootKey is set to HKEY_CURRENT_USER when the registry object
+    // is created .
     myReg.RootKey := HKEY_CURRENT_USER;
     // -- Open key and create it if it not exists
     myReg.OpenKey('\Software\Shoulah\FTP Uplaoder', True);
@@ -394,6 +413,7 @@ begin
   finally
     // Destroys myReg object and frees its associated memory, if necessary.
     myReg.Free;
+    Memo1.Lines.Add('Settings saved successfully..');
   end;
 end;
 
