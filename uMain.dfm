@@ -22,7 +22,6 @@ object frMain: TfrMain
     Width = 426
     Height = 19
     Panels = <>
-    ExplicitTop = 422
   end
   object GroupBox1: TGroupBox
     Left = 8
@@ -154,6 +153,13 @@ object frMain: TfrMain
       TabOrder = 3
       OnClick = Button2Click
     end
+    object ProgressBar1: TProgressBar
+      Left = 16
+      Top = 366
+      Width = 314
+      Height = 17
+      TabOrder = 4
+    end
   end
   object GroupBox5: TGroupBox
     Left = 8
@@ -171,6 +177,8 @@ object frMain: TfrMain
     end
   end
   object IdFTP1: TIdFTP
+    OnWork = IdFTP1Work
+    OnWorkBegin = IdFTP1WorkBegin
     IPVersion = Id_IPv4
     ConnectTimeout = 0
     NATKeepAlive.UseKeepAlive = False

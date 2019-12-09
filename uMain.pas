@@ -35,11 +35,16 @@ type
     IdAntiFreeze1: TIdAntiFreeze;
     GroupBox5: TGroupBox;
     Memo1: TMemo;
+    ProgressBar1: TProgressBar;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
+    procedure IdFTP1WorkBegin(ASender: TObject; AWorkMode: TWorkMode;
+      AWorkCountMax: Int64);
+    procedure IdFTP1Work(ASender: TObject; AWorkMode: TWorkMode;
+      AWorkCount: Int64);
   private
     { Private declarations }
     procedure SaveSettings;
@@ -116,6 +121,7 @@ begin
   until (FindNext(mySearchRec) <> 0);
 
   FindClose(mySearchRec);
+
 end;
 
 procedure TfrMain.ConnectToFTPServer;
@@ -219,13 +225,14 @@ begin
   if FileExists(FileName) then
   begin
     // - Get file attributes
-    Attributes := FileGetAttr(FileName, True);
+    Attributes := FileGetAttr(FileName, False);
     // Remove read only
-    Attributes := Attributes - faReadOnly;
+    Attributes := Attributes  and not faReadOnly;
     // Set new attributes -
-    FileSetAttr(FileName, Attributes, True);
+    FileSetAttr(FileName, Attributes, False);
     // Delete file
-    DeleteFile(FileName);
+    if DeleteFile(FileName) then Memo1.Lines.Add(FileName + ' is deleted.');
+
   end;
 end;
 
@@ -243,9 +250,10 @@ begin
     CreateOrOpenDirectoryOnFTPServer;
     UploadFiles(myFilesList);
     IdFTP1.Disconnect;
-    Memo1.Lines.Add('Disconnected.');
-
+    Memo1.Lines.Add('Disconnected.' + DateTimeToStr(Now));
+    myFilesList.Clear;
   end;
+
 
   myFilesList.Free;
 
@@ -258,6 +266,19 @@ begin
   DoWork;
 
   Timer1.Enabled := True;
+end;
+
+procedure TfrMain.IdFTP1Work(ASender: TObject; AWorkMode: TWorkMode;
+  AWorkCount: Int64);
+begin
+ ProgressBar1.Position := ProgressBar1.Position + AWorkCount;
+end;
+
+procedure TfrMain.IdFTP1WorkBegin(ASender: TObject; AWorkMode: TWorkMode;
+  AWorkCountMax: Int64);
+begin
+ ProgressBar1.Max := AWorkCountMax;
+ ProgressBar1.Position := 0;
 end;
 
 procedure TfrMain.LoadSettings;
@@ -369,6 +390,9 @@ begin
       try
         Memo1.Lines.Add('Try uploading ' +
           ExtractFileName(FilesList.Strings[I]));
+          if not FileExists(FilesList.Strings[I], False) then
+           Memo1.Lines.Add('File does not exists');
+
         IdFTP1.Put(FilesList.Strings[I], ExtractFileName(FilesList.Strings[I]),
           False, 0);
         Memo1.Lines.Add(ExtractFileName(FilesList.Strings[I]) +
