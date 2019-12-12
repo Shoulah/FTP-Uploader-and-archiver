@@ -29,6 +29,20 @@ object frMain: TfrMain
     Width = 409
     Height = 409
     TabOrder = 1
+    object Label6: TLabel
+      Left = 32
+      Top = 336
+      Width = 78
+      Height = 16
+      Caption = 'Check Every :'
+    end
+    object Label7: TLabel
+      Left = 173
+      Top = 336
+      Width = 42
+      Height = 16
+      Caption = 'Second'
+    end
     object GroupBox2: TGroupBox
       Left = 16
       Top = 16
@@ -130,7 +144,7 @@ object frMain: TfrMain
       Left = 16
       Top = 255
       Width = 374
-      Height = 105
+      Height = 74
       Caption = 'Startup Settings'
       TabOrder = 2
       object CheckBox1: TCheckBox
@@ -146,7 +160,7 @@ object frMain: TfrMain
     end
     object Button2: TButton
       Left = 336
-      Top = 366
+      Top = 335
       Width = 57
       Height = 25
       Caption = 'Save'
@@ -155,10 +169,20 @@ object frMain: TfrMain
     end
     object ProgressBar1: TProgressBar
       Left = 16
-      Top = 366
+      Top = 382
       Width = 314
       Height = 17
       TabOrder = 4
+    end
+    object Edit6: TEdit
+      Left = 116
+      Top = 335
+      Width = 51
+      Height = 24
+      Alignment = taCenter
+      NumbersOnly = True
+      TabOrder = 5
+      Text = '15'
     end
   end
   object GroupBox5: TGroupBox

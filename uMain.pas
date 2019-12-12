@@ -36,6 +36,9 @@ type
     GroupBox5: TGroupBox;
     Memo1: TMemo;
     ProgressBar1: TProgressBar;
+    Label6: TLabel;
+    Edit6: TEdit;
+    Label7: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -321,6 +324,14 @@ begin
 
         Edit5.Text := myReg.ReadString('Files Extension');
       end;
+
+      if myReg.ValueExists('Check Interval') then
+      begin
+
+        Edit6.Text := IntToStr(myReg.ReadInteger('Check Interval'));
+
+        Timer1.Interval := myReg.ReadInteger('Check Interval') * 1000;
+      end;
     end;
 
     myReg.CloseKey;
@@ -432,6 +443,8 @@ begin
     myReg.WriteString('Directory', Edit4.Text);
 
     myReg.WriteString('Files Extension', Edit5.Text);
+
+    myReg.WriteInteger('Check Interval', StrToInt(Edit6.Text));
 
     myReg.CloseKey;
   finally
