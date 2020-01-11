@@ -129,7 +129,7 @@ end;
 
 procedure TfrMain.ConnectToFTPServer;
 begin
-  Memo1.Lines.Add('Try to connect to FTP Server..');
+  Memo1.Lines.Add('Try to Connect to FTP Server..');
   IdFTP1.Host := Edit1.Text;
   IdFTP1.Username := Edit2.Text;
   IdFTP1.Password := Edit3.Text;
